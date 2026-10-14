@@ -4,10 +4,10 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
           cache: pip
@@ -16,7 +16,7 @@ jobs:
       - run: python -m library_lab.init_db --sample
       - run: python -m library_lab.analyze --as-of 2025-12-31
       - run: jupyter nbconvert --to notebook --execute notebooks/01_library_analysis.ipynb --output executed.ipynb --output-dir outputs --ExecutePreprocessor.timeout=120
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: library-analysis
           path: outputs/
