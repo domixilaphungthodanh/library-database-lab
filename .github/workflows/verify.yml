@@ -1,0 +1,24 @@
+name: Verify library lab
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python -m library_lab.init_db --sample
+      - run: python -m library_lab.analyze --as-of 2025-12-31
+      - run: jupyter nbconvert --to notebook --execute notebooks/01_library_analysis.ipynb --output executed.ipynb --output-dir outputs --ExecutePreprocessor.timeout=120
+      - uses: actions/upload-artifact@v4
+        with:
+          name: library-analysis
+          path: outputs/
+          if-no-files-found: error
+          retention-days: 14
